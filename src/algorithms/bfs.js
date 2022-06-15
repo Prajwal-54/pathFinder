@@ -42,10 +42,15 @@ function updateUnvisitedNeighbors(node, graph) {
 function getUnvisitedNeighbors(node, graph) {
   const neighbors = [];
   const { col, row } = node;
+
   if (row > 0) neighbors.push(graph[row - 1][col]);
-  if (row < graph.length - 1) neighbors.push(graph[row + 1][col]);
-  if (col > 0) neighbors.push(graph[row][col - 1]);
+
   if (col < graph[0].length - 1) neighbors.push(graph[row][col + 1]);
+
+  if (row < graph.length - 1) neighbors.push(graph[row + 1][col]);
+
+  if (col > 0) neighbors.push(graph[row][col - 1]);
+
   return neighbors.filter((neighbor) => !neighbor.isVisited);
 }
 

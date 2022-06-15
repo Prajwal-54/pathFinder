@@ -1,5 +1,8 @@
 import React from "react";
 import "../css/node.css";
+import { GiBrickWall } from "react-icons/gi";
+
+import { FcLowPriority, FcCollect } from "react-icons/fc";
 
 export default function Node({
   col,
@@ -7,15 +10,12 @@ export default function Node({
   isFinish,
   isStart,
   isWall,
-  isRouter,
   onMouseDown,
   onMouseEnter,
   onMouseUp,
   drageStart,
-  drageStart2,
   drageEnter,
   drageEnd,
-  drageEnd2,
 }) {
   const sOrf = isFinish || isStart;
   const startOrFinish = isFinish
@@ -24,34 +24,30 @@ export default function Node({
     ? "node-start"
     : isWall
     ? "node-wall"
-    : isRouter
-    ? "node-router"
     : " ";
   const className = `node ${startOrFinish}`;
   const nodeId = `node-${row}-${col}`;
-
+  const classIconWall = `wallIcon ${nodeId}`;
   return (
     <div
       id={nodeId}
       className={className}
-      onMouseDown={() => onMouseDown(row, col, isRouter)}
-      onMouseEnter={() => onMouseEnter(row, col)}
-      onMouseUp={() => onMouseUp(row, col, isRouter)}
+      onMouseDown={(e) => onMouseDown(row, col, e)}
+      onMouseEnter={(e) => onMouseEnter(row, col, e)}
+      onMouseUp={(e) => onMouseUp(row, col, e)}
       onDragStart={(e) => {
         if (sOrf) {
           drageStart(e, { row, col, isStart, isFinish });
-        } else if (isRouter) {
-          drageStart2(e, { row, col, isStart, isFinish, isRouter });
         } else {
           e.preventDefault();
         }
       }}
       onDragEnter={(e) => {
-        drageEnter(e, { row, col, isStart, isFinish, isRouter });
+        drageEnter(e, { row, col, isStart, isFinish });
       }}
       onDragEnd={(e) => {
-        if (sOrf || isRouter) {
-          drageEnd(e, { row, col, isRouter, sOrf });
+        if (sOrf) {
+          drageEnd(e, { row, col, sOrf });
         } else {
           e.preventDefault();
         }
@@ -60,20 +56,16 @@ export default function Node({
         e.preventDefault();
       }}
       draggable
-    ></div>
+    >
+      {isStart ? (
+        <FcLowPriority className="startIcon" />
+      ) : isFinish ? (
+        <FcCollect className="finishIcon" />
+      ) : isWall ? (
+        <GiBrickWall className="wallIcon" id={`wall-${row}-${col}`} />
+      ) : (
+        ""
+      )}
+    </div>
   );
 }
-
-/* <div
-      id={nodeId}
-      className={className}
-      onMouseDown={() => {
-        if (isFinish === false && isStart === false) onMouseDown(row, col);
-      }}
-      onMouseEnter={() => {
-        if (isFinish === false && isStart === false) onMouseEnter(row, col);
-      }}
-      onMouseUp={() => {
-        if (isFinish === false && isStart === false) onMouseUp(row, col);
-      }}
-    ></div> */

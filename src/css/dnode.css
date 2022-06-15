@@ -1,0 +1,40 @@
+.dnode {
+  width: 22px;
+  height: 22px;
+  outline: 1px solid #afd8f8;
+  display: inline-block;
+  font-size: xx-small;
+}
+.dnode-finish {
+  outline: none;
+}
+
+.dnode-start {
+  outline: none;
+}
+
+.dnode-wall {
+  background-color: rgba(0, 32, 42, 0.58);
+}
+
+.dnode-visited {
+  border-radius: 50%;
+  background-color: rgba(0, 190, 218, 0.75);
+}
+
+.dnode-shortest-path {
+  border-radius: 50%;
+  background-color: rgb(48, 197, 67);
+}
+.Dnode {
+  display: inline-block;
+  display: flex;
+  margin-left: 50px;
+  color: black;
+}
+.legendName {
+  display: flex;
+  margin-left: 8px;
+  align-items: center;
+  justify-content: center;
+}

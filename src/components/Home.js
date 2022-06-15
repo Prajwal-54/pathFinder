@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+
 import "../css/home.css";
 import Node from "./Node";
-import sound3 from "../sounds/s3.wav";
+import DNode from "./DNode";
 
 import { bfs, getNodesInShortestPathOrder } from "../algorithms/bfs";
 import { dfs, getNodesInShortestPathOrderDfs } from "../algorithms/dfs";
@@ -11,76 +12,78 @@ import { maze, randWalls } from "../algorithms/maze";
 // const G_START_NODE_COL = 8;
 // const G_FINISH_NODE_ROW = 10;
 // const G_FINISH_NODE_COL = 45;
-const NO_OF_ROW = 20;
+const NO_OF_ROW = 18;
 const NO_OF_COL = 60;
 
+const SPEEDS = [11, 5, 17];
+
 export default function Home() {
-  //states
+  //    states   //
   const [graph, setGraph] = useState([]);
   const [mousePressed, setmousePressed] = useState(false);
   const [mousePressed2, setmousePressed2] = useState(false);
-  const [routerSelected, setRouterSelected] = useState(false);
   const [startSelected, setStartSelected] = useState(false);
   const [endSelected, setEndSelected] = useState(false);
-
-  const [connect, setConnect] = useState(false);
   const [cordinates, setCordinates] = useState({
     START_NODE_ROW: 10,
     START_NODE_COL: 16,
     FINISH_NODE_ROW: 10,
     FINISH_NODE_COL: 45,
   });
+  const [curAlgo, setCurAlgo] = useState("Select an Algorithm");
+  const [curSpeed, setCurSpeed] = useState(0);
 
-  const [routers, setRouters] = useState([]);
-  const [tempBfs, setTempBfs] = useState("");
   // var count = 0;
 
   useEffect(() => {
+    // alert("hi");
     // const cur = graph
     if (startSelected !== true || endSelected !== true) {
-      const g = createGraph(cordinates, graph, routers);
+      const g = createGraph(cordinates, graph);
       setGraph(g);
     }
   }, [cordinates]);
 
-  function animateShortestPath(shortestpath, reached) {
+  //    animations   //
+  function animateShortestPath(shortestpath, reached, speed) {
     if (!reached) return;
-
-    var audio = new Audio(sound3);
-
-    var speed = 60;
-    if (shortestpath.length > 15) speed = 50;
-    else if (shortestpath.length > 30) speed = 40;
-    // console.log(audio);
-
+    shortestpath.pop();
+    shortestpath.shift();
     for (let i = 0; i < shortestpath.length; i++) {
       setTimeout(() => {
         const node = shortestpath[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-shortest-path";
-        audio.play();
       }, speed * i);
     }
-    // audio.pause();
   }
-
   function visualize(visitedNodesInOrder, shortestpath, reached) {
+    var speed = SPEEDS[curSpeed];
+
+    // visitedNodesInOrder.pop();
+    visitedNodesInOrder.shift();
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
-          animateShortestPath(shortestpath, reached);
-        }, 10 * i);
+          animateShortestPath(shortestpath, reached, speed);
+        }, speed * i);
         return;
       }
+      if (
+        visitedNodesInOrder[i].row === cordinates.FINISH_NODE_ROW &&
+        visitedNodesInOrder[i].col === cordinates.FINISH_NODE_COL
+      )
+        continue;
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-visited";
-      }, 10 * i);
+      }, speed * i);
     }
   }
 
-  function StartBfs() {
+  //    alogorithms   //
+  function startBfs() {
     setmousePressed(false);
     setmousePressed2(false);
     // const g = graph;
@@ -101,7 +104,7 @@ export default function Home() {
     // const g = graph;
     const start = graph[cordinates.START_NODE_ROW][cordinates.START_NODE_COL];
     const end = graph[cordinates.FINISH_NODE_ROW][cordinates.FINISH_NODE_COL];
-    const shortestpathInOrder = dfs(graph, start, end);
+    const shortestpathInOrder = dfs(graph, start, end, false);
     const startToEnd = getNodesInShortestPathOrderDfs(end);
     // console.log(shortestpathInOrder.path, shortestpathInOrder.reached);
     visualize(
@@ -110,7 +113,13 @@ export default function Home() {
       shortestpathInOrder.reached
     );
   }
+  function startAlgo() {
+    if (curAlgo === "BFS") startBfs();
+    else if (curAlgo === "DFS") startDfs();
+    else setCurAlgo("Select an Algorithm");
+  }
 
+  //    clear functions   //
   function clearGraph() {
     // setmousePressed(false);
     const div = document.getElementsByClassName("node node-visited");
@@ -134,11 +143,32 @@ export default function Home() {
       `node-${cordinates.FINISH_NODE_ROW}-${cordinates.FINISH_NODE_COL}`
     ).className = "node node-finish";
     // const c = c;
-    const g = createGraph(cordinates, [], []);
-    setRouters([]);
+    const g = createGraph(cordinates, []);
+    setGraph(g);
+  }
+  function clearPaths() {
+    const visitedDiv = document.getElementsByClassName("node node-visited");
+    const shortestDiv = document.getElementsByClassName(
+      "node node-shortest-path"
+    );
+    while (visitedDiv.length) {
+      visitedDiv[0].classList.remove("node-visited");
+    }
+    while (shortestDiv.length) {
+      shortestDiv[0].classList.remove("node-shortest-path");
+    }
+    document.getElementById(
+      `node-${cordinates.START_NODE_ROW}-${cordinates.START_NODE_COL}`
+    ).className = "node node-start";
+    document.getElementById(
+      `node-${cordinates.FINISH_NODE_ROW}-${cordinates.FINISH_NODE_COL}`
+    ).className = "node node-finish";
+
+    const g = createGraph(cordinates, graph);
     setGraph(g);
   }
 
+  //    walls/maze   //
   function setWallBtn() {
     setmousePressed((v) => {
       return !v;
@@ -158,50 +188,60 @@ export default function Home() {
     gg[row][col] = newNode;
     return gg;
   }
+  function randomWalls() {
+    // console.log("rnad");
+    clearPaths();
+    const empty = emptyGraph(cordinates);
+    const newG = randWalls(empty, cordinates);
+    const g = createGraph(cordinates, newG);
+    setGraph(g);
+  }
+  function createMaze() {
+    clearPaths();
+    const e1 = emptyGraph(cordinates);
+    const e2 = emptyGraph(cordinates);
+    const e3 = emptyGraph(cordinates);
+    const e4 = emptyGraph(cordinates);
+    const { allPaths, newCordinate } = maze(e1, e2, e3, e4);
+    var newGraph = emptyGraph(newCordinate);
+    // console.log(allPaths[0][0]);
+    for (let row = 0; row < NO_OF_ROW; row++) {
+      for (let col = 0; col < NO_OF_COL; col++) {
+        newGraph = toggleWall(newGraph, row, col);
+      }
+    }
+    allPaths.forEach((path) => {
+      path.forEach((node) => {
+        if (
+          newGraph[node.row][node.col].isWall &&
+          node.row !== 0 &&
+          node.row !== 17 &&
+          node.col !== 0 &&
+          node.col !== 59
+        )
+          newGraph = toggleWall(newGraph, node.row, node.col);
+      });
+    });
+    // console.log(newCordinate);
 
+    setCordinates(newCordinate);
+    const g = createGraph(newCordinate, newGraph);
+    setGraph(g);
+  }
+
+  //    mouse functions  //
   const drageStart = (e, position) => {
     if (position.isStart) {
       setEndSelected(false);
       setStartSelected(true);
-      setRouterSelected(false);
     } else if (position.isFinish) {
       setStartSelected(false);
       setEndSelected(true);
-      setRouterSelected(false);
     } else e.preventDefault();
     // setmousePressed(false);
     // setmousePressed2(false);
     // console.log("start", cordinates);
   };
-
-  const drageStart2 = (e, position) => {
-    if (connect === false) return;
-    if (position.isRouter) {
-      setTempBfs({
-        startRow: position.row,
-        startCol: position.col,
-        endRow: position.row,
-        endCol: position.col,
-      });
-    }
-  };
-
-  const drageEnd2 = (e, position) => {
-    if (connect === false) return;
-    if (position.isRouter || position.sOrf) {
-      console.log(position);
-      const start = graph[tempBfs.startRow][tempBfs.startCol];
-      const end = graph[position.row][position.col];
-      // const path = bfs(graph, start, end);
-
-      // const startToEnd = getNodesInShortestPathOrder(path);
-    }
-  };
-
-  function connectNodes() {
-    setRouterSelected(false);
-    setConnect((t) => !t);
-  }
 
   const drageEnter = (e, position) => {
     // console.log(position);
@@ -211,17 +251,6 @@ export default function Home() {
     const ss = startSelected;
     const ee = endSelected;
 
-    if (connect) {
-      setTempBfs((t) => {
-        return {
-          startRow: t.startRow,
-          startCol: t.startCol,
-          endRow: r,
-          endCol: c,
-        };
-      });
-      return;
-    }
     if (graph[r][c].isWall) return;
     // console.log("enter", cordinates);
     if (ss) {
@@ -253,22 +282,6 @@ export default function Home() {
 
   const drageEnd = (e, position) => {
     // if (mousePressed === true) return;
-
-    if (position.isRouter) {
-      if (connect === false) return;
-
-      // console.log(position);
-      const start = graph[tempBfs.startRow][tempBfs.startCol];
-      const end = graph[tempBfs.endRow][tempBfs.endCol];
-
-      const path = bfs(graph, start, end);
-
-      const startToEnd = getNodesInShortestPathOrder(end);
-      animateShortestPath(startToEnd, path.reached);
-      console.log(startToEnd);
-
-      return;
-    }
 
     const r = parseInt(position.row);
     const c = parseInt(position.col);
@@ -315,7 +328,7 @@ export default function Home() {
     setEndSelected(false);
     setmousePressed(false);
     setmousePressed2(false);
-    setRouterSelected(false);
+
     // console.log("end", cordinates);
   };
 
@@ -330,28 +343,15 @@ export default function Home() {
   }
 
   function onMouseUp(row, col) {
+    // console.log("up");
     setmousePressed2(false);
     // setRouterSelected(false);
-    console.log("mouse up");
+    // console.log("mouse up");
   }
 
-  function toggleRouter(g, row, col) {
-    const gg = g.slice();
-    const node = gg[row][col];
-    const newNode = {
-      ...node,
-      isRouter: !node.isRouter,
-    };
-    gg[row][col] = newNode;
-    return gg;
-  }
-  function onMouseDown(row, col) {
+  function onMouseDown(row, col, e) {
     const mouse = mousePressed;
-    if (routerSelected) {
-      const newGraph = toggleRouter(graph, row, col);
-      setGraph(newGraph);
-      return;
-    }
+
     if (mouse === false && checkStartOrEnd(row, col) === true) {
       return;
     }
@@ -362,6 +362,11 @@ export default function Home() {
       col === cordinates.FINISH_NODE_COL
     )
       return;
+    // console.log("down");
+
+    const curNode = document.getElementById(`node-${row}-${col}`);
+    const r = document.getElementById(`wall-${row}-${col}`);
+
     const g = graph;
     if (mouse === false) return;
     setmousePressed2(true);
@@ -385,56 +390,120 @@ export default function Home() {
       return;
     } else {
       if (pressAndHold === false || pressAndHold2 === false) return;
-      console.log("mouse enter");
+      const curNode = document.getElementById(`node-${row}-${col}`);
+      const r = document.getElementById(`wall-${row}-${col}`);
+
+      // console.log("mouse enter");
+
       const g = graph;
       const newGraph = toggleWall(g, row, col);
       setGraph(newGraph);
     }
   }
 
-  function randomWalls() {
-    console.log("rnad");
-    const empty = emptyGraph(cordinates, routers);
-    const newG = randWalls(empty, cordinates);
-    const g = createGraph(cordinates, newG, routers);
-    setGraph(g);
-  }
-  function createMaze() {
-    // const e = emptyGraph(cordinates);
-    // maze(e);
-  }
-  function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  function check(rtr) {
-    const c = cordinates;
-
-    if (c.FINISH_NODE_COL === rtr.c && c.FINISH_NODE_ROW === rtr.r)
-      return false;
-    if (c.START_NODE_ROW === rtr.r && c.START_NODE_COL === rtr.c) return false;
-    const rrts = routers;
-    for (let i = 0; i < rrts.length; i++) {
-      if (rrts[i].r === rtr.r && rrts[i].c === rtr.c) return false;
-    }
-    return true;
-  }
-  function addRouter() {
-    setRouterSelected((t) => !t);
-  }
-
   return (
-    <>
-      <button onClick={() => StartBfs()}>Visualize BfS's </button>
-      <button onClick={() => startDfs()}>Visualize DfS's </button>
-      <button onClick={() => clearGraph()}>clearGraph</button>
-      <button onClick={() => setWallBtn()}>
-        place wall : {String(mousePressed)}
-      </button>
-      <button onClick={() => randomWalls()}>maze</button>
-      <button onClick={() => addRouter()}>add router</button>
-      <button onClick={() => connectNodes()}>connect</button>
+    <div className="main">
+      <div className="header">
+        <h2>Pathfinding Visualizer</h2>
+        <div className="buttonWrap">
+          <select
+            className="algoList"
+            value={curAlgo}
+            onChange={(e) => setCurAlgo(e.target.value)}
+          >
+            <option>Algorithm</option>
+            <option>BFS</option>
+            <option>DFS</option>
+          </select>
 
+          <button onClick={() => randomWalls()}>Random Walls</button>
+          <button onClick={() => createMaze()}>Maze</button>
+          <button onClick={() => startAlgo()}>Start</button>
+          <button onClick={() => setWallBtn()}>
+            Place Wall : {mousePressed ? "on" : "off"}
+          </button>
+          <button onClick={() => clearPaths()}>Clear Paths</button>
+          <button onClick={() => clearGraph()}>Clear Graph</button>
+          <select
+            className="speedList"
+            value={
+              curSpeed === 0
+                ? "normal"
+                : curSpeed === 1
+                ? "fast"
+                : curSpeed === 2
+                ? "slow"
+                : "normal"
+            }
+            onChange={(e) =>
+              setCurSpeed((c) => {
+                return e.target.value === "normal"
+                  ? 0
+                  : e.target.value === "fast"
+                  ? 1
+                  : e.target.value === "slow"
+                  ? 2
+                  : 0;
+              })
+            }
+          >
+            <option>normal</option>
+            <option>slow</option>
+            <option>fast</option>
+          </select>
+        </div>
+        <div className="legends">
+          <DNode
+            isFinish={false}
+            isStart={true}
+            isWall={false}
+            isVisited={false}
+            isShortest={false}
+            isUnvisited={false}
+          ></DNode>
+          <DNode
+            isFinish={true}
+            isStart={false}
+            isWall={false}
+            isVisited={false}
+            isShortest={false}
+            isUnvisited={false}
+          ></DNode>
+          <DNode
+            isFinish={false}
+            isStart={false}
+            isWall={true}
+            isVisited={false}
+            isShortest={false}
+            isUnvisited={false}
+          ></DNode>
+          <DNode
+            isFinish={false}
+            isStart={false}
+            isWall={false}
+            isVisited={false}
+            isShortest={false}
+            isUnvisited={true}
+          ></DNode>
+          <DNode
+            isFinish={false}
+            isStart={false}
+            isWall={false}
+            isVisited={true}
+            isShortest={false}
+            isUnvisited={false}
+          ></DNode>
+          <DNode
+            isFinish={false}
+            isStart={false}
+            isWall={false}
+            isVisited={false}
+            isShortest={true}
+            isUnvisited={false}
+          ></DNode>
+        </div>
+        <div className="board">pick an algorithm and start !</div>
+      </div>
       <div
         id="g"
         className="graph"
@@ -448,15 +517,7 @@ export default function Home() {
           return (
             <div key={rowIdx}>
               {row.map((node, nodeIdx) => {
-                const {
-                  row,
-                  col,
-                  isFinish,
-                  isStart,
-                  distance,
-                  isRouter,
-                  isWall,
-                } = node;
+                const { row, col, isFinish, isStart, distance, isWall } = node;
 
                 return (
                   <Node
@@ -466,16 +527,13 @@ export default function Home() {
                     isFinish={isFinish}
                     isStart={isStart}
                     isWall={isWall}
-                    isRouter={isRouter}
                     distance={distance}
                     onMouseDown={onMouseDown}
                     onMouseEnter={onMouseEnter}
                     onMouseUp={onMouseUp}
                     drageStart={drageStart}
-                    drageStart2={drageStart2}
                     drageEnter={drageEnter}
                     drageEnd={drageEnd}
-                    drageEnd2={drageEnd2}
                   ></Node>
                 );
               })}
@@ -483,15 +541,11 @@ export default function Home() {
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
 
-function createNode(col, row, c, rt) {
-  var isRtr = false;
-  for (let i = 0; i < rt.length; i++) {
-    if (rt[i].r === row && rt[i].c === col) isRtr = true;
-  }
+function createNode(col, row, c) {
   return {
     col,
     row,
@@ -499,19 +553,18 @@ function createNode(col, row, c, rt) {
     isFinish: row === c.FINISH_NODE_ROW && col === c.FINISH_NODE_COL,
     distance: Infinity,
     isVisited: false,
-    isRouter: isRtr,
     isWall: false,
     previousNode: null,
   };
 }
 
-function emptyGraph(c, rt) {
+function emptyGraph(c) {
   const graph = [];
 
   for (let row = 0; row < NO_OF_ROW; row++) {
     const currentRow = [];
     for (let col = 0; col < NO_OF_COL; col++) {
-      currentRow.push(createNode(col, row, c, rt));
+      currentRow.push(createNode(col, row, c));
     }
     graph.push(currentRow);
   }
@@ -520,7 +573,7 @@ function emptyGraph(c, rt) {
   return graph;
 }
 
-function createGraph(c, g, rt) {
+function createGraph(c, g) {
   // console.log("create", c);
 
   const graph = [];
@@ -531,7 +584,7 @@ function createGraph(c, g, rt) {
       var cur;
       if (g.length !== 0 && g[row][col].isWall) {
         cur = g[row][col];
-      } else cur = createNode(col, row, c, rt);
+      } else cur = createNode(col, row, c);
       currentRow.push(cur);
     }
     graph.push(currentRow);

@@ -1,67 +1,88 @@
-const NO_OF_ROW = 20;
+import { dfs, getNodesInShortestPathOrderDfs } from "./dfs";
+import { bfs, getNodesInShortestPathOrder } from "./bfs";
+const NO_OF_ROW = 18;
 const NO_OF_COL = 60;
-const S_ROW = 10;
-const S_COL = 16;
-const F_ROW = 10;
-const F_COL = 45;
 
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex !== 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
-}
-
-function getNeighbors(node, graph) {
-  const neighbors = [];
-  const { col, row } = node;
-  if (row > 0) neighbors.push(graph[row - 1][col]);
-  if (col < graph[0].length - 1) neighbors.push(graph[row][col + 1]);
-  if (row < graph.length - 1) neighbors.push(graph[row + 1][col]);
-  if (col > 0) neighbors.push(graph[row][col - 1]);
-
-  return neighbors.filter((neighbor) => !neighbor.isVisited);
-  // shuffle(neighbors);
-  // return neighbors;
-}
-
-function allPathsDFS(g, start, end, curpath, allPaths) {
-  if (allPaths.length > 20 || curpath.length > 30) return;
-  curpath.push(start);
-
-  if (start === end) {
-    allPaths.push(curpath);
-    console.log("curpath");
-  } else {
-    const n = getNeighbors(start, g);
-
-    for (const ng of n) {
-      allPathsDFS(g, ng, end, curpath, allPaths);
-    }
-  }
-  curpath.pop();
-}
-
-export function maze(g) {
-  const start = g[S_ROW][S_COL];
-  const end = g[F_ROW][F_COL];
+export function maze(g1, g2, g3, g4) {
   const allPaths = [];
-  const curpath = [];
+  var S_ROW, S_COL, F_ROW, F_COL, start, end;
+  var i = 0;
+  const possibleCordinates = [];
 
-  // allPathsDFS(g, start, end, curpath, allPaths);
+  S_ROW = getRndInteger(1, 7);
+  S_COL = getRndInteger(1, 18);
+  F_ROW = getRndInteger(10, 15);
+  F_COL = getRndInteger(40, 58);
+  possibleCordinates.push({
+    START_NODE_ROW: S_ROW,
+    START_NODE_COL: S_COL,
+    FINISH_NODE_ROW: F_ROW,
+    FINISH_NODE_COL: F_COL,
+  });
+  start = g1[S_ROW][S_COL];
+  end = g1[F_ROW][F_COL];
+  var t = dfs(g1, start, end, true);
+  var path = getNodesInShortestPathOrderDfs(end);
+  if (t.reached) allPaths.push(path);
+
+  S_ROW = getRndInteger(3, 13);
+  S_COL = getRndInteger(1, 18);
+  F_ROW = getRndInteger(13, 17);
+  F_COL = getRndInteger(40, 56);
+  possibleCordinates.push({
+    START_NODE_ROW: S_ROW,
+    START_NODE_COL: S_COL,
+    FINISH_NODE_ROW: F_ROW,
+    FINISH_NODE_COL: F_COL,
+  });
+  start = g2[S_ROW][S_COL];
+  end = g2[F_ROW][F_COL];
+
+  t = dfs(g2, start, end, true);
+  path = getNodesInShortestPathOrderDfs(end);
+  if (t.reached) allPaths.push(path);
+
+  i = 0;
+
+  S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
+  S_COL = getRndInteger(1, 18);
+  F_ROW = getRndInteger(10 + i * 2, 13 + i * 2);
+  F_COL = getRndInteger(40, 58);
+  possibleCordinates.push({
+    START_NODE_ROW: S_ROW,
+    START_NODE_COL: S_COL,
+    FINISH_NODE_ROW: F_ROW,
+    FINISH_NODE_COL: F_COL,
+  });
+
+  start = g3[S_ROW][S_COL];
+  end = g3[F_ROW][F_COL];
+
+  t = bfs(g3, start, end);
+  path = getNodesInShortestPathOrder(end);
+  if (t.reached) allPaths.push(path);
+  i++;
+
+  S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
+  S_COL = getRndInteger(1, 18);
+  F_ROW = getRndInteger(10 + i * 2, 13 + i * 2);
+  F_COL = getRndInteger(40, 58);
+  possibleCordinates.push({
+    START_NODE_ROW: S_ROW,
+    START_NODE_COL: S_COL,
+    FINISH_NODE_ROW: F_ROW,
+    FINISH_NODE_COL: F_COL,
+  });
+  start = g4[S_ROW][S_COL];
+  end = g4[F_ROW][F_COL];
+  t = bfs(g4, start, end);
+  path = getNodesInShortestPathOrder(end);
+  if (t.reached) allPaths.push(path);
+
+  // console.log(allPaths);
+  const newCordinate =
+    possibleCordinates[getRndInteger(0, possibleCordinates.length - 1)];
+  return { allPaths, newCordinate };
 }
 
 ///random walls
@@ -82,7 +103,7 @@ export function randWalls(gg, c) {
   for (let i = 0; i < NO_OF_ROW; i++) {
     // let l = NO_OF_COL * i;
     // let r = l + NO_OF_COL - 1;
-    let walls = getRndInteger(15, 20);
+    let walls = getRndInteger(13, 18);
 
     for (let j = 0; j < walls; j++) {
       var t = getRndInteger(0, NO_OF_COL - 1);

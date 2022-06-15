@@ -6,13 +6,39 @@
   font-size: xx-small;
 }
 .node-finish {
-  background-color: red;
+  /* background-color: red;
+  border-radius: 50%; */
+  /* border: white;
+  background-color: white; */
+  outline: none !important;
 }
-.node-router {
-  background-color: black;
+.startIcon {
+  height: inherit;
+  width: inherit;
 }
+.finishIcon {
+  height: inherit;
+  width: inherit;
+
+  /* background-color: white; */
+}
+.wallIcon {
+  height: inherit;
+  width: inherit;
+}
+/* .blank {
+  background-color: white;
+  outline: none;
+} */
 .node-start {
-  background-color: green;
+  /* background-color: green;
+  border-radius: 50%; */
+  /* outline: none; */
+  outline: none !important;
+}
+
+.node-shortest-path .finishIcon {
+  outline: none;
 }
 
 .node-wall {
@@ -39,11 +65,12 @@
 
   100% {
     transform: scale(1);
-    background-color: rgba(0, 32, 42, 0.58);
+    background-color: rgba(69, 71, 71, 0.58);
   }
 }
 
 .node-visited {
+  border-radius: 50%;
   animation-name: visitedAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -77,6 +104,7 @@
 }
 
 .node-shortest-path {
+  border-radius: 50%;
   animation-name: shortestPath;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
