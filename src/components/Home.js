@@ -15,7 +15,7 @@ import { maze, randWalls } from "../algorithms/maze";
 const NO_OF_ROW = 18;
 const NO_OF_COL = 60;
 
-const SPEEDS = [11, 5, 17];
+const SPEEDS = [10, 5, 17];
 
 export default function Home() {
   //    states   //
@@ -32,6 +32,10 @@ export default function Home() {
   });
   const [curAlgo, setCurAlgo] = useState("Select an Algorithm");
   const [curSpeed, setCurSpeed] = useState(0);
+  const [boardText, setBoardText] = useState(
+    "<strong>pick an algorithm and start !</strong>"
+  );
+  const [animationStarted, setAnimationStarted] = useState(false);
 
   // var count = 0;
 
@@ -59,13 +63,14 @@ export default function Home() {
   }
   function visualize(visitedNodesInOrder, shortestpath, reached) {
     var speed = SPEEDS[curSpeed];
-
+    setAnimationStarted(true);
     // visitedNodesInOrder.pop();
     visitedNodesInOrder.shift();
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
           animateShortestPath(shortestpath, reached, speed);
+          setAnimationStarted(false);
         }, speed * i);
         return;
       }
@@ -114,13 +119,19 @@ export default function Home() {
     );
   }
   function startAlgo() {
-    if (curAlgo === "BFS") startBfs();
-    else if (curAlgo === "DFS") startDfs();
-    else setCurAlgo("Select an Algorithm");
+    if (animationStarted) return;
+    if (curAlgo === "BFS") {
+      startBfs();
+    } else if (curAlgo === "DFS") {
+      startDfs();
+    } else {
+      setCurAlgo("Select an Algorithm");
+    }
   }
 
   //    clear functions   //
   function clearGraph() {
+    if (animationStarted) return;
     // setmousePressed(false);
     const div = document.getElementsByClassName("node node-visited");
     const div1 = document.getElementsByClassName("node node-shortest-path");
@@ -147,6 +158,7 @@ export default function Home() {
     setGraph(g);
   }
   function clearPaths() {
+    if (animationStarted) return;
     const visitedDiv = document.getElementsByClassName("node node-visited");
     const shortestDiv = document.getElementsByClassName(
       "node node-shortest-path"
@@ -170,6 +182,7 @@ export default function Home() {
 
   //    walls/maze   //
   function setWallBtn() {
+    if (animationStarted) return;
     setmousePressed((v) => {
       return !v;
     });
@@ -189,6 +202,7 @@ export default function Home() {
     return gg;
   }
   function randomWalls() {
+    if (animationStarted) return;
     // console.log("rnad");
     clearPaths();
     const empty = emptyGraph(cordinates);
@@ -197,12 +211,14 @@ export default function Home() {
     setGraph(g);
   }
   function createMaze() {
+    if (animationStarted) return;
     clearPaths();
     const e1 = emptyGraph(cordinates);
     const e2 = emptyGraph(cordinates);
     const e3 = emptyGraph(cordinates);
     const e4 = emptyGraph(cordinates);
     const { allPaths, newCordinate } = maze(e1, e2, e3, e4);
+    // console.log(allPaths);
     var newGraph = emptyGraph(newCordinate);
     // console.log(allPaths[0][0]);
     for (let row = 0; row < NO_OF_ROW; row++) {
@@ -210,17 +226,24 @@ export default function Home() {
         newGraph = toggleWall(newGraph, row, col);
       }
     }
+    var pathSet = new Set();
     allPaths.forEach((path) => {
       path.forEach((node) => {
-        if (
-          newGraph[node.row][node.col].isWall &&
-          node.row !== 0 &&
-          node.row !== 17 &&
-          node.col !== 0 &&
-          node.col !== 59
-        )
-          newGraph = toggleWall(newGraph, node.row, node.col);
+        pathSet.add(node);
       });
+    });
+    pathSet = Array.from(pathSet);
+
+    pathSet.forEach((node) => {
+      if (
+        newGraph[node.row][node.col].isWall === true &&
+        node.row !== 0 &&
+        node.row !== 17 &&
+        node.col !== 0 &&
+        node.col !== 59
+      ) {
+        newGraph = toggleWall(newGraph, node.row, node.col);
+      }
     });
     // console.log(newCordinate);
 
@@ -364,9 +387,6 @@ export default function Home() {
       return;
     // console.log("down");
 
-    const curNode = document.getElementById(`node-${row}-${col}`);
-    const r = document.getElementById(`wall-${row}-${col}`);
-
     const g = graph;
     if (mouse === false) return;
     setmousePressed2(true);
@@ -390,8 +410,6 @@ export default function Home() {
       return;
     } else {
       if (pressAndHold === false || pressAndHold2 === false) return;
-      const curNode = document.getElementById(`node-${row}-${col}`);
-      const r = document.getElementById(`wall-${row}-${col}`);
 
       // console.log("mouse enter");
 
@@ -409,7 +427,20 @@ export default function Home() {
           <select
             className="algoList"
             value={curAlgo}
-            onChange={(e) => setCurAlgo(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value === "BFS") {
+                setBoardText(
+                  `<strong>Breath first search is <i>unweighted </i>and <i>guarantee </i>shortest path</strong> `
+                );
+              } else if (e.target.value === "DFS") {
+                setBoardText(
+                  "<strong>Depth first search is <i>unweighted </i> and <i>does not guarantee</i> shortest path </>"
+                );
+              } else {
+                setBoardText("<strong>pick an algorithm and start !</strong>");
+              }
+              setCurAlgo(e.target.value);
+            }}
           >
             <option>Algorithm</option>
             <option>BFS</option>
@@ -502,7 +533,10 @@ export default function Home() {
             isUnvisited={false}
           ></DNode>
         </div>
-        <div className="board">pick an algorithm and start !</div>
+        <div
+          className="board"
+          dangerouslySetInnerHTML={{ __html: boardText }}
+        />
       </div>
       <div
         id="g"

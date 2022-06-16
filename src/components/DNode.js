@@ -29,6 +29,8 @@ export default function DNode({
         <FcLowPriority className={`dnode ${className}`} />
       ) : isFinish ? (
         <FcCollect className={`dnode ${className}`} />
+      ) : isWall ? (
+        <GiBrickWall className={`dnode ${className}`} />
       ) : (
         <div className={`dnode ${className}`}></div>
       )}

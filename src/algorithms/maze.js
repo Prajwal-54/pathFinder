@@ -10,8 +10,8 @@ export function maze(g1, g2, g3, g4) {
   const possibleCordinates = [];
 
   S_ROW = getRndInteger(1, 7);
-  S_COL = getRndInteger(1, 18);
-  F_ROW = getRndInteger(10, 15);
+  S_COL = getRndInteger(1, 15);
+  F_ROW = getRndInteger(12, 16);
   F_COL = getRndInteger(40, 58);
   possibleCordinates.push({
     START_NODE_ROW: S_ROW,
@@ -25,9 +25,9 @@ export function maze(g1, g2, g3, g4) {
   var path = getNodesInShortestPathOrderDfs(end);
   if (t.reached) allPaths.push(path);
 
-  S_ROW = getRndInteger(3, 13);
+  S_ROW = getRndInteger(7, 13);
   S_COL = getRndInteger(1, 18);
-  F_ROW = getRndInteger(13, 17);
+  F_ROW = getRndInteger(2, 8);
   F_COL = getRndInteger(40, 56);
   possibleCordinates.push({
     START_NODE_ROW: S_ROW,
@@ -42,44 +42,43 @@ export function maze(g1, g2, g3, g4) {
   path = getNodesInShortestPathOrderDfs(end);
   if (t.reached) allPaths.push(path);
 
-  i = 0;
+  // i = 0;
 
-  S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
-  S_COL = getRndInteger(1, 18);
-  F_ROW = getRndInteger(10 + i * 2, 13 + i * 2);
-  F_COL = getRndInteger(40, 58);
-  possibleCordinates.push({
-    START_NODE_ROW: S_ROW,
-    START_NODE_COL: S_COL,
-    FINISH_NODE_ROW: F_ROW,
-    FINISH_NODE_COL: F_COL,
-  });
+  // S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
+  // S_COL = getRndInteger(1, 18);
+  // F_ROW = getRndInteger(10 + i * 2, 12 + i * 2);
+  // F_COL = getRndInteger(40, 57);
+  // possibleCordinates.push({
+  //   START_NODE_ROW: S_ROW,
+  //   START_NODE_COL: S_COL,
+  //   FINISH_NODE_ROW: F_ROW,
+  //   FINISH_NODE_COL: F_COL,
+  // });
 
-  start = g3[S_ROW][S_COL];
-  end = g3[F_ROW][F_COL];
+  // start = g3[S_ROW][S_COL];
+  // end = g3[F_ROW][F_COL];
 
-  t = bfs(g3, start, end);
-  path = getNodesInShortestPathOrder(end);
-  if (t.reached) allPaths.push(path);
-  i++;
+  // t = bfs(g3, start, end);
+  // path = getNodesInShortestPathOrder(end);
+  // if (t.reached) allPaths.push(path);
+  // i++;
 
-  S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
-  S_COL = getRndInteger(1, 18);
-  F_ROW = getRndInteger(10 + i * 2, 13 + i * 2);
-  F_COL = getRndInteger(40, 58);
-  possibleCordinates.push({
-    START_NODE_ROW: S_ROW,
-    START_NODE_COL: S_COL,
-    FINISH_NODE_ROW: F_ROW,
-    FINISH_NODE_COL: F_COL,
-  });
-  start = g4[S_ROW][S_COL];
-  end = g4[F_ROW][F_COL];
-  t = bfs(g4, start, end);
-  path = getNodesInShortestPathOrder(end);
-  if (t.reached) allPaths.push(path);
+  // S_ROW = getRndInteger(1 + i * 2, 7 + i * 2);
+  // S_COL = getRndInteger(1, 17);
+  // F_ROW = getRndInteger(10 + i * 2, 12 + i * 2);
+  // F_COL = getRndInteger(40, 57);
+  // possibleCordinates.push({
+  //   START_NODE_ROW: S_ROW,
+  //   START_NODE_COL: S_COL,
+  //   FINISH_NODE_ROW: F_ROW,
+  //   FINISH_NODE_COL: F_COL,
+  // });
+  // start = g4[S_ROW][S_COL];
+  // end = g4[F_ROW][F_COL];
+  // t = bfs(g4, start, end);
+  // path = getNodesInShortestPathOrder(end);
+  // if (t.reached) allPaths.push(path);
 
-  // console.log(allPaths);
   const newCordinate =
     possibleCordinates[getRndInteger(0, possibleCordinates.length - 1)];
   return { allPaths, newCordinate };
