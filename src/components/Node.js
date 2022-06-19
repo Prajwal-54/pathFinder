@@ -27,7 +27,7 @@ export default function Node({
     : " ";
   const className = `node ${startOrFinish}`;
   const nodeId = `node-${row}-${col}`;
-  const classIconWall = `wallIcon ${nodeId}`;
+  
   return (
     <div
       id={nodeId}

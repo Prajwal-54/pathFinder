@@ -1,6 +1,6 @@
 .node {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   outline: 1px solid #afd8f8;
   display: inline-block;
   font-size: xx-small;
@@ -84,12 +84,14 @@
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);
-    background-color: rgba(0, 0, 66, 0.75);
+    /* background-color: rgba(0, 0, 66, 0.75); */
+    background-color: #935ed3;
     border-radius: 100%;
   }
 
   50% {
-    background-color: rgba(17, 104, 217, 0.75);
+    /* background-color: rgba(17, 104, 217, 0.75); */
+    background-color: #ab8ab9;
   }
 
   75% {
