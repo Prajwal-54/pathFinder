@@ -1,4 +1,4 @@
-# Sorting Visualizer
+# PathFinding Visualizer
 
 Visualize the fundamental path finding algorithms in graph theory DFS and BFS
 
