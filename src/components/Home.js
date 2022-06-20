@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "../css/home.css";
 import Node from "./Node";
 import DNode from "./DNode";
+import { VscGithub } from "react-icons/vsc";
 
 import { bfs, getNodesInShortestPathOrder } from "../algorithms/bfs";
 import { dfs, getNodesInShortestPathOrderDfs } from "../algorithms/dfs";
@@ -439,7 +440,8 @@ export default function Home() {
   return (
     <div className="main">
       <div className="header">
-        <h2>Pathfinding Visualizer</h2>
+        <h2 onClick={(e) => tutorial()}>Pathfinding Visualizer</h2>
+
         <div className="buttonWrap">
           <select
             className="algoList"
@@ -615,7 +617,15 @@ export default function Home() {
         })}
       </div>
       <div id="tutorialBoard">
-        <h3>Pathfinding Visualizer</h3>
+        <div id="tutorialHeader">
+          <a href="https://github.com/Prajwal-54V/pathFinder" id="gitHubLink">
+            <h3>Pathfinding Visualizer</h3>
+            <div id="githubSpan">
+              Github
+              <VscGithub id="gitHubIcon" />
+            </div>
+          </a>
+        </div>
         <div id="tutorialPara">
           <h4>How does this work ?</h4> <br />
           <ol>
