@@ -1,6 +1,7 @@
 # PathFinding Visualizer
 
 Visualize the fundamental path finding algorithms in graph theory DFS and BFS
+
 **Note : Use in Desktop Chrome browser !**
 
 #### visit here : https://prajwal-54v.github.io/pathFinder/
