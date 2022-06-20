@@ -1,13 +1,13 @@
 {
-  "files": {
-    "main.css": "/pathFinder/static/css/main.677e565a.css",
-    "main.js": "/pathFinder/static/js/main.70a39826.js",
-    "index.html": "/pathFinder/index.html",
-    "main.677e565a.css.map": "/pathFinder/static/css/main.677e565a.css.map",
-    "main.70a39826.js.map": "/pathFinder/static/js/main.70a39826.js.map"
-  },
-  "entrypoints": [
-    "static/css/main.677e565a.css",
-    "static/js/main.70a39826.js"
-  ]
+  "main.css": "/pathFinder/static/css/main.194ffbb3.chunk.css",
+  "main.js": "/pathFinder/static/js/main.29913505.chunk.js",
+  "main.js.map": "/pathFinder/static/js/main.29913505.chunk.js.map",
+  "static/js/1.edd2e25e.chunk.js": "/pathFinder/static/js/1.edd2e25e.chunk.js",
+  "static/js/1.edd2e25e.chunk.js.map": "/pathFinder/static/js/1.edd2e25e.chunk.js.map",
+  "runtime~main.js": "/pathFinder/static/js/runtime~main.1ee68610.js",
+  "runtime~main.js.map": "/pathFinder/static/js/runtime~main.1ee68610.js.map",
+  "static/css/main.194ffbb3.chunk.css.map": "/pathFinder/static/css/main.194ffbb3.chunk.css.map",
+  "index.html": "/pathFinder/index.html",
+  "precache-manifest.2aa36f71399b9d559f503508263b8c39.js": "/pathFinder/precache-manifest.2aa36f71399b9d559f503508263b8c39.js",
+  "service-worker.js": "/pathFinder/service-worker.js"
 }
