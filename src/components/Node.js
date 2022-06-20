@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/node.css";
-import { GiBrickWall } from "react-icons/gi";
+// import { GiBrickWall } from "react-icons/gi";
 
 import { FcLowPriority, FcCollect } from "react-icons/fc";
 
@@ -27,8 +27,37 @@ export default function Node({
     : " ";
   const className = `node ${startOrFinish}`;
   const nodeId = `node-${row}-${col}`;
-  const classIconWall = `wallIcon ${nodeId}`;
-  return (
+
+  return isWall ? (
+    <div
+      id={nodeId}
+      className={className}
+      onMouseDown={(e) => onMouseDown(row, col, e)}
+      onMouseEnter={(e) => onMouseEnter(row, col, e)}
+      onMouseUp={(e) => onMouseUp(row, col, e)}
+      onDragStart={(e) => {
+        if (sOrf) {
+          drageStart(e, { row, col, isStart, isFinish });
+        } else {
+          e.preventDefault();
+        }
+      }}
+      onDragEnter={(e) => {
+        drageEnter(e, { row, col, isStart, isFinish });
+      }}
+      onDragEnd={(e) => {
+        if (sOrf) {
+          drageEnd(e, { row, col, sOrf });
+        } else {
+          e.preventDefault();
+        }
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
+      draggable
+    />
+  ) : (
     <div
       id={nodeId}
       className={className}
@@ -61,8 +90,6 @@ export default function Node({
         <FcLowPriority className="startIcon" />
       ) : isFinish ? (
         <FcCollect className="finishIcon" />
-      ) : isWall ? (
-        <GiBrickWall className="wallIcon" id={`wall-${row}-${col}`} />
       ) : (
         ""
       )}

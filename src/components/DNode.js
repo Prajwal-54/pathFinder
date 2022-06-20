@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/dnode.css";
 import { GiBrickWall } from "react-icons/gi";
-
+import { GrCircleQuestion } from "react-icons/gr";
 import { FcLowPriority, FcCollect } from "react-icons/fc";
 export default function DNode({
   isFinish,
@@ -10,6 +10,8 @@ export default function DNode({
   isVisited,
   isShortest,
   isUnvisited,
+  isTutorial,
+  onClick,
 }) {
   const className = isStart
     ? "dnode-start"
@@ -21,6 +23,8 @@ export default function DNode({
     ? "dnode-visited"
     : isShortest
     ? "dnode-shortest-path"
+    : isTutorial
+    ? "dnode-tutorial"
     : " ";
 
   return (
@@ -31,23 +35,34 @@ export default function DNode({
         <FcCollect className={`dnode ${className}`} />
       ) : isWall ? (
         <GiBrickWall className={`dnode ${className}`} />
+      ) : isTutorial ? (
+        <p className="howTo" onClick={(e) => onClick()}>
+          how to
+        </p>
       ) : (
         <div className={`dnode ${className}`}></div>
       )}
 
-      <div className="legendName">
-        {isStart
-          ? "start node"
-          : isFinish
-          ? "finish node"
-          : isWall
-          ? "wall node"
-          : isVisited
-          ? "visited node"
-          : isShortest
-          ? "path node"
-          : "unvisited node"}
-      </div>
+      {isTutorial === false ? (
+        <div className="legendName">
+          {isStart
+            ? "start node"
+            : isFinish
+            ? "finish node"
+            : isWall
+            ? "wall node"
+            : isVisited
+            ? "visited node"
+            : isShortest
+            ? "path node"
+            : "unvisited node"}
+        </div>
+      ) : (
+        <GrCircleQuestion
+          className={`dnode ${className}`}
+          onClick={(e) => onClick()}
+        ></GrCircleQuestion>
+      )}
     </div>
   );
 }

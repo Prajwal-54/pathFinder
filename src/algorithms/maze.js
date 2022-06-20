@@ -1,12 +1,12 @@
 import { dfs, getNodesInShortestPathOrderDfs } from "./dfs";
-import { bfs, getNodesInShortestPathOrder } from "./bfs";
+// import { bfs, getNodesInShortestPathOrder } from "./bfs";
 const NO_OF_ROW = 18;
 const NO_OF_COL = 60;
 
 export function maze(g1, g2, g3, g4) {
   const allPaths = [];
   var S_ROW, S_COL, F_ROW, F_COL, start, end;
-  var i = 0;
+  // var i = 0;
   const possibleCordinates = [];
 
   S_ROW = getRndInteger(1, 7);

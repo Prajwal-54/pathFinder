@@ -25,9 +25,9 @@ export default function Home() {
   const [startSelected, setStartSelected] = useState(false);
   const [endSelected, setEndSelected] = useState(false);
   const [cordinates, setCordinates] = useState({
-    START_NODE_ROW: 10,
+    START_NODE_ROW: 8,
     START_NODE_COL: 16,
-    FINISH_NODE_ROW: 10,
+    FINISH_NODE_ROW: 8,
     FINISH_NODE_COL: 45,
   });
   const [curAlgo, setCurAlgo] = useState("Select an Algorithm");
@@ -50,7 +50,15 @@ export default function Home() {
 
   //    animations   //
   function animateShortestPath(shortestpath, reached, speed) {
-    if (!reached) return;
+    if (!reached) {
+      setBoardText(
+        "<strong>Path does not exists between Start node and Finish node</strong>"
+      );
+      return;
+    }
+    setBoardText(
+      "<strong>Path exists between Start node and Finish node</strong>"
+    );
     shortestpath.pop();
     shortestpath.shift();
     for (let i = 0; i < shortestpath.length; i++) {
@@ -91,7 +99,7 @@ export default function Home() {
   function startBfs() {
     setmousePressed(false);
     setmousePressed2(false);
-    // const g = graph;
+
     // const c = cordinates;
     const start = graph[cordinates.START_NODE_ROW][cordinates.START_NODE_COL];
     const end = graph[cordinates.FINISH_NODE_ROW][cordinates.FINISH_NODE_COL];
@@ -194,6 +202,7 @@ export default function Home() {
   function toggleWall(g, row, col) {
     const gg = g.slice();
     const node = gg[row][col];
+    // console.log(node);
     const newNode = {
       ...node,
       isWall: !node.isWall,
@@ -419,6 +428,14 @@ export default function Home() {
     }
   }
 
+  function tutorial() {
+    document.getElementById("tutorialBoard").style.display = "block";
+  }
+
+  function toggleTutorial() {
+    document.getElementById("tutorialBoard").style.display = "none";
+  }
+
   return (
     <div className="main">
       <div className="header">
@@ -430,11 +447,11 @@ export default function Home() {
             onChange={(e) => {
               if (e.target.value === "BFS") {
                 setBoardText(
-                  `<strong>Breath first search is <i>unweighted </i>and <i>guarantee </i>shortest path</strong> `
+                  `<strong>Breath first search is(BFS) <i>unweighted </i>and <i>guarantee </i>shortest path</strong> `
                 );
               } else if (e.target.value === "DFS") {
                 setBoardText(
-                  "<strong>Depth first search is <i>unweighted </i> and <i>does not guarantee</i> shortest path </>"
+                  "<strong>Depth first search(DFS) is <i>unweighted </i> and <i>does not guarantee</i> shortest path </>"
                 );
               } else {
                 setBoardText("<strong>pick an algorithm and start !</strong>");
@@ -491,6 +508,8 @@ export default function Home() {
             isVisited={false}
             isShortest={false}
             isUnvisited={false}
+            isTutorial={false}
+            onClick={tutorial}
           ></DNode>
           <DNode
             isFinish={true}
@@ -499,6 +518,8 @@ export default function Home() {
             isVisited={false}
             isShortest={false}
             isUnvisited={false}
+            isTutorial={false}
+            onClick={tutorial}
           ></DNode>
           <DNode
             isFinish={false}
@@ -507,6 +528,8 @@ export default function Home() {
             isVisited={false}
             isShortest={false}
             isUnvisited={false}
+            isTutorial={false}
+            onClick={tutorial}
           ></DNode>
           <DNode
             isFinish={false}
@@ -515,6 +538,8 @@ export default function Home() {
             isVisited={false}
             isShortest={false}
             isUnvisited={true}
+            isTutorial={false}
+            onClick={tutorial}
           ></DNode>
           <DNode
             isFinish={false}
@@ -523,6 +548,8 @@ export default function Home() {
             isVisited={true}
             isShortest={false}
             isUnvisited={false}
+            isTutorial={false}
+            onClick={tutorial}
           ></DNode>
           <DNode
             isFinish={false}
@@ -531,6 +558,18 @@ export default function Home() {
             isVisited={false}
             isShortest={true}
             isUnvisited={false}
+            isTutorial={false}
+            onClick={tutorial}
+          ></DNode>
+          <DNode
+            isFinish={false}
+            isStart={false}
+            isWall={false}
+            isVisited={false}
+            isShortest={false}
+            isUnvisited={false}
+            isTutorial={true}
+            onClick={tutorial}
           ></DNode>
         </div>
         <div
@@ -574,6 +613,63 @@ export default function Home() {
             </div>
           );
         })}
+      </div>
+      <div id="tutorialBoard">
+        <h3>Pathfinding Visualizer</h3>
+        <div id="tutorialPara">
+          <h4>How does this work ?</h4> <br />
+          <ol>
+            <li>
+              <strong>Select Algorithm</strong> you want to visualize
+            </li>
+
+            <li>
+              To change position of <strong>start</strong> or
+              <strong> finish</strong> node,<strong>press and hold </strong>
+              existing start or finish node then
+              <strong> drag and drop</strong> desired node on board
+            </li>
+            <li>
+              Start button to <strong>start animation</strong>
+            </li>
+          </ol>
+          <ul style={{ marginTop: "30px" }}>
+            <li>
+              <strong>Random walls :</strong> To fill board with walls in
+              <strong> random </strong>
+              position
+              <br />
+              note : path may or may not exist between start and finish ,since
+              walls are placed in random nodes.
+            </li>
+            <li>
+              <strong>Maze :</strong> Creates a maze around start and finish
+              node ,atleast one possible path exists between start and finish.
+            </li>
+            <li>
+              <strong>Clear Path :</strong> Removes all traversed node,shortest
+              path route from board
+              <strong> after animation </strong>is completed.
+            </li>
+            <li>
+              <strong>Clear Graph :</strong> Clears entire board including
+              Walls, Paths.
+            </li>
+            <li>
+              <strong>Place Wall : </strong>
+              Toggle button to place walls manualy, toggle place wall button
+              <strong> click on node </strong> to place walls and also you can
+              <strong> drag from one node to other node </strong>this add walls
+              between 2 nodes if walls already exists removes it
+            </li>
+            <li>
+              <strong>Speed :</strong> Select animation speed
+            </li>
+          </ul>
+        </div>
+        <button id="tutorialClose" onClick={(e) => toggleTutorial()}>
+          close
+        </button>
       </div>
     </div>
   );

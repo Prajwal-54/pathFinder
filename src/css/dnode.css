@@ -1,6 +1,6 @@
 .dnode {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   outline: 1px solid #afd8f8;
   display: inline-block;
   font-size: xx-small;
@@ -16,7 +16,17 @@
 .dnode-wall {
   background-color: rgba(0, 32, 42, 0.58);
 }
-
+.dnode-tutorial {
+  outline: none;
+  height: 17px;
+  width: 17px;
+  cursor: pointer;
+}
+.howTo {
+  text-decoration: underline;
+  margin-right: 5px;
+  cursor: pointer;
+}
 .dnode-visited {
   border-radius: 50%;
   background-color: rgba(0, 190, 218, 0.75);
@@ -29,7 +39,7 @@
 .Dnode {
   display: inline-block;
   display: flex;
-  margin-left: 50px;
+  /* margin-left: 20px; */
   color: black;
 }
 .legendName {
