@@ -21,6 +21,8 @@
 
 .header {
   background-color: #935ed3;
+  outline: 1px solid #34495e;
+  margin-bottom: 5px;
 }
 .buttonWrap {
   display: flex;

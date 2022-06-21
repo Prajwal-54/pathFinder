@@ -637,7 +637,7 @@ export default function Home() {
               To change position of <strong>start</strong> or
               <strong> finish</strong> node,<strong>press and hold </strong>
               existing start or finish node then
-              <strong> drag and drop</strong> desired node on board
+              <strong> drag and move </strong> desired node on board
             </li>
             <li>
               Start button to <strong>start animation</strong>
