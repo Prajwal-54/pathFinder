@@ -4,7 +4,7 @@ Visualize the fundamental path finding algorithms in graph theory DFS and BFS
 
 **Note : Use in Desktop Chrome browser !**
 
-#### try here : https://prajwal-54v.github.io/pathFinder/
+#### try here :https://prajwal-54.github.io/pathFinder/
 
 ### DEPTH-FIRST SEARCH
 
